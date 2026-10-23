@@ -13,17 +13,21 @@
   <!-- Arcade Hub Global Navigation Bar -->
   <style>
     .arcade-global-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      z-index: 2000;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 20px;
-      background: rgba(11, 15, 30, 0.94);
+      padding: 0 20px;
+      background: rgba(11, 15, 30, 0.96);
       border-bottom: 1px solid #2e3b6e;
       font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      position: sticky;
-      top: 0;
-      z-index: 9999;
-      width: 100%;
+      backdrop-filter: blur(8px);
+      box-sizing: border-box;
     }
     .arcade-global-brand {
       color: #f8fafc;

@@ -10,15 +10,17 @@ body {
   color: #f1f5f9;
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   overflow-x: hidden;
 }
 
 /* Modal Join Screen */
 .modal-backdrop {
   position: fixed;
-  inset: 0;
+  top: 52px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%);
   display: flex;
   align-items: center;
@@ -207,7 +209,9 @@ body {
   width: 100%;
   max-width: 1280px;
   padding: 16px;
+  margin-top: 52px;
   gap: 16px;
+  align-self: center;
 }
 
 .hidden {
