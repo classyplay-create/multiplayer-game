@@ -17,6 +17,14 @@ const MAP_HEIGHT = 600;
 const PLAYER_SIZE = 30;
 const FOOD_COUNT = 30;
 
+// ==========================================
+// ⚙️ BACKEND FEATURE TOGGLES (ON / OFF SWITCHES)
+// ==========================================
+// When TRUE: Blocks a user from opening 2 tabs in the same browser, and blocks duplicate names.
+// When FALSE: Anyone can open multiple tabs (great for testing).
+let PREVENT_MULTI_LOGIN = process.env.PREVENT_MULTI_LOGIN === 'true'; // Default: false
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // Admin secret passcode
+
 // Serve static frontend files from 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -47,9 +55,36 @@ io.on('connection', (socket) => {
     const rawName = (data && data.name) ? String(data.name).trim() : 'Player';
     const cleanName = rawName.substring(0, 15) || 'Guest';
     const playerColor = (data && data.color) ? String(data.color) : '#38bdf8';
+    const deviceId = (data && data.deviceId) ? String(data.deviceId) : null;
+
+    // Optional Check: Prevent multiple logins / tabs if feature is toggled ON
+    if (PREVENT_MULTI_LOGIN) {
+      // 1. Check if same browser device is already active in the game
+      if (deviceId) {
+        const isAlreadyPlaying = Object.values(players).some((p) => p.deviceId === deviceId);
+        if (isAlreadyPlaying) {
+          socket.emit('joinError', {
+            message: '⚠️ Multi-tab is blocked: You already have this game running in another tab!',
+          });
+          return;
+        }
+      }
+
+      // 2. Check if nickname is already taken by someone else
+      const isNameTaken = Object.values(players).some(
+        (p) => p.name.toLowerCase() === cleanName.toLowerCase()
+      );
+      if (isNameTaken) {
+        socket.emit('joinError', {
+          message: `⚠️ The name "${cleanName}" is already taken! Please choose another name.`,
+        });
+        return;
+      }
+    }
 
     players[socket.id] = {
       id: socket.id,
+      deviceId: deviceId,
       name: cleanName,
       color: playerColor,
       x: Math.floor(Math.random() * (MAP_WIDTH - 100)) + 50,
@@ -93,6 +128,28 @@ io.on('connection', (socket) => {
 
     const text = String(messageData && messageData.text ? messageData.text : '').trim().substring(0, 80);
     if (!text) return;
+
+    // Secret Admin Toggle Command: /admin toggle-multi
+    // Allows you to turn Multi-Tab Blocking ON or OFF live in 1 second!
+    if (text.toLowerCase().startsWith('/admin')) {
+      const parts = text.split(' ');
+      const command = parts[1] || '';
+      const pass = parts[2] || '';
+
+      // Check if command is toggle-multi (accepts "/admin toggle-multi" or with password)
+      if (command.toLowerCase() === 'toggle-multi') {
+        PREVENT_MULTI_LOGIN = !PREVENT_MULTI_LOGIN;
+        console.log(`[CONFIG] PREVENT_MULTI_LOGIN is now: ${PREVENT_MULTI_LOGIN}`);
+        
+        io.emit('chatMessage', {
+          sender: '🛡️ SERVER ADMIN',
+          color: '#facc15',
+          text: `Rule updated: Multi-tab login is now ${PREVENT_MULTI_LOGIN ? 'BLOCKED 🚫' : 'ALLOWED ✅'}!`,
+          timestamp: Date.now(),
+        });
+        return;
+      }
+    }
 
     io.emit('chatMessage', {
       sender: player.name,

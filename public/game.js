@@ -5,6 +5,7 @@ const socket = io();
 const joinModal = document.getElementById('joinModal');
 const nicknameInput = document.getElementById('nicknameInput');
 const joinBtn = document.getElementById('joinBtn');
+const joinErrorBanner = document.getElementById('joinErrorBanner');
 const colorButtons = document.querySelectorAll('.color-btn');
 const rememberMeCheckbox = document.getElementById('rememberMeCheckbox');
 const soundToggleBtn = document.getElementById('soundToggleBtn');
@@ -188,10 +189,22 @@ colorButtons.forEach((btn) => {
   });
 });
 
+// Unique persistent browser device ID (to identify same browser session)
+let deviceId = localStorage.getItem('blockArena_deviceId');
+if (!deviceId) {
+  deviceId = 'dev_' + Math.random().toString(36).substring(2, 12);
+  localStorage.setItem('blockArena_deviceId', deviceId);
+}
+
 // Join Game action
 function performJoin() {
   initAudio();
   playClickSound();
+
+  if (joinErrorBanner) {
+    joinErrorBanner.classList.add('hidden');
+    joinErrorBanner.textContent = '';
+  }
 
   const name = nicknameInput.value.trim() || 'Player';
 
@@ -209,20 +222,30 @@ function performJoin() {
   socket.emit('join', {
     name: name,
     color: selectedColor,
+    deviceId: deviceId,
   });
 }
 
 joinBtn.addEventListener('click', performJoin);
 nicknameInput.addEventListener('keydown', (e) => {
+  if (joinErrorBanner) joinErrorBanner.classList.add('hidden');
   if (e.key === 'Enter') performJoin();
 });
 
-// Socket Acknowledge
+// Socket Acknowledge: Successful Join
 socket.on('joined', (data) => {
   myId = data.selfId;
   hasJoined = true;
   joinModal.classList.add('hidden');
   gameContainer.classList.remove('hidden');
+});
+
+// Socket Error: Join Rejected (e.g. multi-tab blocked or duplicate name)
+socket.on('joinError', (err) => {
+  if (joinErrorBanner) {
+    joinErrorBanner.textContent = err.message || '⚠️ Unable to join room.';
+    joinErrorBanner.classList.remove('hidden');
+  }
 });
 
 // Real-Time Game State from Server
