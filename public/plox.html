@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PLOX - 1v1 Falling Gem Battle</title>
+  <link rel="stylesheet" href="/plox.css" />
+</head>
+<body>
+  <!-- Top Arcade Navigation Bar -->
+  <nav class="arcade-navbar">
+    <div class="nav-brand">
+      <span class="brand-glow">⚡ ARCADE</span> HUB
+    </div>
+    <div class="nav-links">
+      <a href="/index.html" class="nav-link">🧱 Block Arena (10P)</a>
+      <a href="/plox.html" class="nav-link active">💎 Plox (1v1 Puzzle)</a>
+    </div>
+    <div class="audio-controls">
+      <button id="btnMusicToggle" class="audio-btn active" type="button" aria-label="Toggle Music">
+        🎵 Music ON
+      </button>
+      <button id="btnSfxToggle" class="audio-btn active" type="button" aria-label="Toggle Sound Effects">
+        🔊 SFX ON
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Game Container -->
+  <main class="plox-container">
+    <!-- Left / Primary Player Area -->
+    <section class="player-stage">
+      <!-- Left HUD Sidebar -->
+      <div class="hud-column">
+        <div class="hud-card">
+          <div class="hud-label">NEXT</div>
+          <canvas id="nextCanvas" width="72" height="144"></canvas>
+        </div>
+
+        <div class="hud-card">
+          <div class="hud-label">SCORE</div>
+          <div id="playerScore" class="hud-value">0</div>
+        </div>
+
+        <div class="hud-card">
+          <div class="hud-label">LEVEL</div>
+          <div id="playerLevel" class="hud-value">1</div>
+        </div>
+
+        <div class="hud-card">
+          <div class="hud-label">CHAIN</div>
+          <div id="playerChain" class="hud-value chain-text">0x</div>
+        </div>
+
+        <button id="btnMenuReturn" class="menu-return-btn" type="button">
+          ⚙️ Mode / Lobby
+        </button>
+      </div>
+
+      <!-- Primary Active Board -->
+      <div class="board-wrapper" id="playerBoardWrapper">
+        <div class="board-header">
+          <span id="localPlayerName" class="player-tag">YOU</span>
+          <div class="junk-warning-bar" id="playerJunkTray" title="Incoming Junk Blocks"></div>
+        </div>
+
+        <div class="canvas-frame">
+          <canvas id="playerCanvas" width="288" height="576"></canvas>
+
+          <!-- Floating Combo / Attack Callout -->
+          <div id="comboBanner" class="combo-banner hidden">COMBO x2!</div>
+
+          <!-- Countdown Overlay -->
+          <div id="countdownOverlay" class="board-overlay hidden">
+            <div id="countdownText" class="countdown-number">3</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right / Opponent Live Mini-Board & Controls Info -->
+    <aside class="opponent-stage">
+      <div class="opponent-card" id="opponentPanel">
+        <div class="board-header">
+          <span id="opponentName" class="player-tag opponent-tag">SOLO PRACTICE</span>
+          <span id="matchBadge" class="mode-badge">SOLO</span>
+        </div>
+
+        <div class="opponent-junk-row">
+          <span class="mini-label">INCOMING JUNK:</span>
+          <span id="opponentJunkCount" class="junk-counter">0</span>
+        </div>
+
+        <div class="opponent-canvas-wrap">
+          <canvas id="opponentCanvas" width="180" height="360"></canvas>
+          <div id="soloOverlayMsg" class="solo-overlay">
+            <p>Solo Endless Mode</p>
+            <span>Switch to 1v1 Battle to duel a live opponent!</span>
+          </div>
+        </div>
+
+        <div class="opponent-stats">
+          <div class="opp-stat">
+            <span>OPP SCORE</span>
+            <strong id="opponentScore">0</strong>
+          </div>
+          <div class="opp-stat">
+            <span>LAST CHAIN</span>
+            <strong id="opponentCombo">0x</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Keyboard Guide (Desktop) -->
+      <div class="controls-guide">
+        <h3>CONTROLS</h3>
+        <ul>
+          <li><kbd>←</kbd> <kbd>→</kbd> Move Column</li>
+          <li><kbd>↑</kbd> / <kbd>Z</kbd> / <kbd>W</kbd> Cycle Gem Colors</li>
+          <li><kbd>↓</kbd> / <kbd>S</kbd> Soft Drop</li>
+          <li><kbd>SPACE</kbd> Hard Drop</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Mobile Virtual Touch Controls -->
+  <section class="mobile-controls" aria-label="Touch Controls">
+    <div class="dpad-group">
+      <button id="touchLeft" class="touch-btn" type="button">◀</button>
+      <button id="touchDown" class="touch-btn" type="button">▼</button>
+      <button id="touchRight" class="touch-btn" type="button">▶</button>
+    </div>
+    <div class="action-group">
+      <button id="touchRotate" class="touch-btn action-rotate" type="button">🔄 CYCLE</button>
+      <button id="touchDrop" class="touch-btn action-drop" type="button">⚡ DROP</button>
+    </div>
+  </section>
+
+  <!-- Lobby / Matchmaking Modal -->
+  <div id="lobbyModal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-title-group">
+        <h1 class="game-logo">PLOX</h1>
+        <p class="game-subtitle">1v1 Falling Gem Chain-Reaction Arena</p>
+      </div>
+
+      <div class="input-group">
+        <label for="playerNameInput">PILOT NAME</label>
+        <input id="playerNameInput" type="text" maxlength="16" placeholder="Enter your handle..." value="GemMaster" />
+      </div>
+
+      <div class="lobby-actions">
+        <button id="btnStartSolo" class="btn-primary btn-solo" type="button">
+          🕹️ Solo Practice (Endless)
+        </button>
+
+        <button id="btnQuickMatch" class="btn-primary btn-battle" type="button">
+          ⚔️ 1v1 Quick Match
+        </button>
+      </div>
+
+      <div class="private-divider">
+        <span>OR PRIVATE DUEL</span>
+      </div>
+
+      <div class="private-controls">
+        <button id="btnCreatePrivate" class="btn-secondary" type="button">
+          🔑 Create Room Code
+        </button>
+        <div class="join-code-row">
+          <input id="roomCodeInput" type="text" maxlength="5" placeholder="CODE" />
+          <button id="btnJoinPrivate" class="btn-secondary" type="button">JOIN</button>
+        </div>
+      </div>
+
+      <!-- Queue / Room Status Box -->
+      <div id="lobbyStatusBox" class="lobby-status hidden">
+        <div class="spinner"></div>
+        <div id="lobbyStatusText">Searching for opponent...</div>
+        <button id="btnCancelMatch" class="btn-cancel" type="button">Cancel</button>
+      </div>
+
+      <div id="lobbyErrorMsg" class="lobby-error hidden"></div>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div id="gameOverModal" class="modal-backdrop hidden">
+    <div class="modal-card result-card">
+      <h2 id="resultTitle" class="result-title">VICTORY!</h2>
+      <p id="resultSubtitle" class="result-subtitle">You topped out your opponent!</p>
+
+      <div class="result-stats">
+        <div class="stat-pill">
+          <span>FINAL SCORE</span>
+          <strong id="finalScoreVal">0</strong>
+        </div>
+        <div class="stat-pill">
+          <span>MAX CHAIN</span>
+          <strong id="finalMaxChainVal">0x</strong>
+        </div>
+      </div>
+
+      <div class="result-buttons">
+        <button id="btnPlayAgain" class="btn-primary btn-battle" type="button">🔄 Play Again</button>
+        <button id="btnBackToLobby" class="btn-secondary" type="button">🏠 Main Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/plox.js"></script>
+</body>
+</html>

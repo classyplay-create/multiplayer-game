@@ -10,6 +10,66 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Arcade Hub Global Navigation Bar -->
+  <style>
+    .arcade-global-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: rgba(11, 15, 30, 0.94);
+      border-bottom: 1px solid #2e3b6e;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      width: 100%;
+    }
+    .arcade-global-brand {
+      color: #f8fafc;
+      font-weight: 900;
+      font-size: 1.05rem;
+      letter-spacing: 1.5px;
+    }
+    .arcade-global-brand span {
+      color: #00f2fe;
+      text-shadow: 0 0 10px rgba(0, 242, 254, 0.7);
+    }
+    .arcade-global-links {
+      display: flex;
+      gap: 10px;
+    }
+    .arcade-global-link {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .arcade-global-link:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .arcade-global-link.active {
+      color: #00f2fe;
+      background: rgba(0, 242, 254, 0.12);
+      border-color: rgba(0, 242, 254, 0.4);
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.2);
+    }
+  </style>
+
+  <nav class="arcade-global-nav">
+    <div class="arcade-global-brand">
+      <span>⚡ ARCADE</span> HUB
+    </div>
+    <div class="arcade-global-links">
+      <a href="/index.html" class="arcade-global-link active">🧱 Block Arena (10P)</a>
+      <a href="/plox.html" class="arcade-global-link">💎 Plox (1v1 Puzzle)</a>
+    </div>
+  </nav>
   <!-- Join Overlay Modal (Zero registration, instant enter) -->
   <div id="joinModal" class="modal-backdrop">
     <div class="modal-card">
