@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Block Arena - Multiplayer Web Game</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Join Overlay Modal (Zero registration, instant enter) -->
+  <div id="joinModal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="logo-badge">🎮 10-PLAYER TEST ARENA</div>
+        <h1>Block Arena</h1>
+        <p>Real-time multiplayer browser game powered by Node.js & Socket.io</p>
+      </div>
+
+      <div class="modal-body">
+        <label for="nicknameInput">Your Nickname</label>
+        <input type="text" id="nicknameInput" placeholder="Enter your name..." maxlength="15" autofocus>
+
+        <label>Choose Your Color</label>
+        <div class="color-picker" id="colorPicker">
+          <button type="button" class="color-btn active" data-color="#38bdf8" style="--c: #38bdf8;"></button>
+          <button type="button" class="color-btn" data-color="#4ade80" style="--c: #4ade80;"></button>
+          <button type="button" class="color-btn" data-color="#a855f7" style="--c: #a855f7;"></button>
+          <button type="button" class="color-btn" data-color="#f43f5e" style="--c: #f43f5e;"></button>
+          <button type="button" class="color-btn" data-color="#f59e0b" style="--c: #f59e0b;"></button>
+          <button type="button" class="color-btn" data-color="#ec4899" style="--c: #ec4899;"></button>
+        </div>
+
+        <button id="joinBtn" class="btn-primary">Enter Game Room 🚀</button>
+      </div>
+
+      <div class="modal-footer">
+        <span>Controls: <strong>W, A, S, D</strong> or <strong>Arrow Keys</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Game Container -->
+  <div id="gameContainer" class="game-container hidden">
+    <!-- Top HUD Bar -->
+    <header class="game-header">
+      <div class="header-left">
+        <span class="app-logo">🟦 Block Arena</span>
+        <span class="badge" id="playerCountBadge">👤 1 Online</span>
+      </div>
+      <div class="header-right">
+        <span class="badge score-badge">Score: <strong id="myScoreDisplay">0</strong></span>
+        <span class="badge ping-badge" id="pingDisplay">📶 -- ms</span>
+      </div>
+    </header>
+
+    <!-- Play Area & Sidebar -->
+    <main class="game-layout">
+      <!-- Game Canvas Area -->
+      <section class="canvas-wrapper">
+        <canvas id="gameCanvas" width="900" height="600"></canvas>
+
+        <!-- Notification Banner Toast -->
+        <div id="notificationBanner" class="notification-banner"></div>
+
+        <!-- Mobile Touch D-Pad (Visible on touch or small devices) -->
+        <div id="mobileControls" class="mobile-controls">
+          <button class="d-btn up" data-key="up">▲</button>
+          <div class="d-row">
+            <button class="d-btn left" data-key="left">◀</button>
+            <button class="d-btn down" data-key="down">▼</button>
+            <button class="d-btn right" data-key="right">▶</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sidebar: Live Leaderboard & Quick Reactions -->
+      <aside class="game-sidebar">
+        <!-- Live Leaderboard -->
+        <div class="sidebar-box">
+          <div class="box-title">🏆 Live Leaderboard</div>
+          <ul id="leaderboardList" class="leaderboard-list">
+            <li class="loading-item">Waiting for players...</li>
+          </ul>
+        </div>
+
+        <!-- Chat & Reactions Box -->
+        <div class="sidebar-box chat-box">
+          <div class="box-title">💬 Room Chat & Emotes</div>
+          <div id="chatFeed" class="chat-feed"></div>
+
+          <!-- Quick Reaction Buttons -->
+          <div class="quick-emotes">
+            <button class="emote-btn" data-emoji="🔥">🔥</button>
+            <button class="emote-btn" data-emoji="😎">😎</button>
+            <button class="emote-btn" data-emoji="🏆">🏆</button>
+            <button class="emote-btn" data-emoji="🚀">🚀</button>
+            <button class="emote-btn" data-emoji="💥">💥</button>
+            <button class="emote-btn" data-emoji="👏">👏</button>
+          </div>
+
+          <!-- Chat Input -->
+          <form id="chatForm" class="chat-form">
+            <input type="text" id="chatInput" placeholder="Send a message to friends..." maxlength="80">
+            <button type="submit" class="send-btn">Send</button>
+          </form>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Socket.io Client Script (provided automatically by Socket.io server) -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- Client Game Script -->
+  <script src="game.js"></script>
+</body>
+</html>
