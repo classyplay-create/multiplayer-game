@@ -25,8 +25,13 @@ const FOOD_COUNT = 30;
 let PREVENT_MULTI_LOGIN = process.env.PREVENT_MULTI_LOGIN === 'true'; // Default: false
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // Admin secret passcode
 
-// Serve static frontend files from 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static frontend files from 'public' directory (with HTML extension support)
+app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html', 'htm'] }));
+
+// Explicit Plox route handler
+app.get('/plox', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'plox.html'));
+});
 
 // Game State
 const players = {};
