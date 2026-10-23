@@ -93,16 +93,29 @@ multiplayer-game/
 
 ---
 
-## 3. AUDIO SYSTEM (WEB AUDIO API - ZERO EXTERNAL ASSETS)
-Implement procedural 8-bit sound effects using the browser's built-in Web Audio API:
-1. `rotateSound`: Short 600Hz blip.
-2. `dropSound`: Low 150Hz thump.
-3. `popSound`: High-pitched 880Hz chime for single match.
-4. `comboSound`: Ascending fanfare with pitch scaling based on combo multiplier ($\times 2, \times 3, \dots$).
-5. `junkSiren`: Two-tone alert when incoming garbage is queued.
-6. `gameOverSound`: Descending minor chord.
-7. `victorySound`: Triumphant ascending triad.
-* Include a `🔊 Sound ON / 🔇 Sound OFF` toggle saved in `localStorage`.
+## 3. COMPLETE AUDIO ENGINE (RETRO CHIPTUNE BGM + ARCADE SOUND EFFECTS)
+Implement a full procedural audio engine using the browser's built-in **Web Audio API** (requires zero external MP3/audio files to download, zero latency, 100% reliable across all browsers):
+
+### A. Dynamic Chiptune Background Music (BGM)
+* **Catchy 8-bit Arcade Melody:** A looping chiptune sequence composed of a pulsing bassline (triangle wave) and a melodic lead synth (square wave with gentle lowpass filter).
+* **Dynamic Tension Tempo:** As the player's blocks stack closer to the top ceiling (danger zone $\ge 8$ rows), the music tempo automatically accelerates to increase tension!
+* **Independent Controls:** Include separate toggles:
+  * `🎵 Music: ON / OFF` (with volume slider or toggle)
+  * `🔊 SFX: ON / OFF`
+* Preferences must persist in `localStorage`.
+
+### B. Procedural 8-Bit Sound Effects (SFX)
+1. **Rotate Blip:** Quick 600Hz frequency jump on color rotation.
+2. **Soft Drop Tick:** Light rhythmic click while sliding down.
+3. **Hard Drop Slam:** Punchy low-frequency thud on impact.
+4. **Match-3 Pop:** Bright chime with pitch scaling:
+   * 3-block match: Standard pop
+   * 4-block match: Higher octave chime
+   * 5-block match: Double sparkle chime
+5. **Cascading Combo Fanfare:** Triumphant rising arpeggio that scales in pitch with each combo multiplier ($\times 2, \times 3, \times 4\dots$).
+6. **Incoming Junk Siren:** Pulsing two-tone danger alert when garbage blocks are queued.
+7. **Game Over Sound:** Descending minor chord sequence.
+8. **Victory Fanfare:** Triumphant ascending triad chord.
 
 ---
 
