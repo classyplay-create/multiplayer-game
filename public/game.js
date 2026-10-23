@@ -6,6 +6,8 @@ const joinModal = document.getElementById('joinModal');
 const nicknameInput = document.getElementById('nicknameInput');
 const joinBtn = document.getElementById('joinBtn');
 const colorButtons = document.querySelectorAll('.color-btn');
+const rememberMeCheckbox = document.getElementById('rememberMeCheckbox');
+const soundToggleBtn = document.getElementById('soundToggleBtn');
 const gameContainer = document.getElementById('gameContainer');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -28,6 +30,145 @@ let serverPlayers = {};
 let renderPlayers = {};
 let serverFoods = [];
 let hasJoined = false;
+let previousScore = 0;
+
+// ==========================================
+// 8-BIT RETRO AUDIO SYNTHESIZER (Web Audio API)
+// ==========================================
+let audioCtx = null;
+let isSoundMuted = localStorage.getItem('blockArena_soundMuted') === 'true';
+
+// Update sound toggle button visual
+function updateSoundButtonUI() {
+  if (soundToggleBtn) {
+    soundToggleBtn.textContent = isSoundMuted ? '🔇 Sound OFF' : '🔊 Sound ON';
+    soundToggleBtn.classList.toggle('muted', isSoundMuted);
+  }
+}
+updateSoundButtonUI();
+
+if (soundToggleBtn) {
+  soundToggleBtn.addEventListener('click', () => {
+    initAudio();
+    isSoundMuted = !isSoundMuted;
+    localStorage.setItem('blockArena_soundMuted', isSoundMuted);
+    updateSoundButtonUI();
+    if (!isSoundMuted) playClickSound();
+  });
+}
+
+function initAudio() {
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      audioCtx = new AudioContextClass();
+    }
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+// 8-bit Gem Pickup Chime (high arpeggio chime)
+function playGemSound() {
+  if (isSoundMuted || !audioCtx) return;
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(587.33, now); // D5
+  osc.frequency.setValueAtTime(880, now + 0.07); // A5
+
+  gain.gain.setValueAtTime(0.25, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + 0.22);
+}
+
+// Player Join Chime (rising welcoming chord)
+function playJoinSound() {
+  if (isSoundMuted || !audioCtx) return;
+  const now = audioCtx.currentTime;
+  [523.25, 659.25, 783.99].forEach((freq, idx) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+
+    gain.gain.setValueAtTime(0.12, now + idx * 0.06);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.22);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now + idx * 0.06);
+    osc.stop(now + idx * 0.06 + 0.22);
+  });
+}
+
+// Chat Pop Sound
+function playChatSound() {
+  if (isSoundMuted || !audioCtx) return;
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(440, now);
+  osc.frequency.exponentialRampToValueAtTime(750, now + 0.06);
+
+  gain.gain.setValueAtTime(0.12, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + 0.08);
+}
+
+// Soft UI Click Sound
+function playClickSound() {
+  if (isSoundMuted || !audioCtx) return;
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(600, now);
+  gain.gain.setValueAtTime(0.08, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + 0.04);
+}
+
+// ==========================================
+// REMEMBER NICKNAME & COLOR FEATURE
+// ==========================================
+const savedRemember = localStorage.getItem('blockArena_remember');
+const savedName = localStorage.getItem('blockArena_name');
+const savedColor = localStorage.getItem('blockArena_color');
+
+if (savedRemember === 'false') {
+  if (rememberMeCheckbox) rememberMeCheckbox.checked = false;
+} else {
+  // Pre-fill saved name if user enabled remember
+  if (savedName && nicknameInput) {
+    nicknameInput.value = savedName;
+  }
+  // Pre-select saved color if present
+  if (savedColor) {
+    selectedColor = savedColor;
+    colorButtons.forEach((b) => {
+      b.classList.toggle('active', b.dataset.color === savedColor);
+    });
+  }
+}
 
 const keys = {
   up: false,
@@ -39,6 +180,8 @@ const keys = {
 // Color selection
 colorButtons.forEach((btn) => {
   btn.addEventListener('click', () => {
+    initAudio();
+    playClickSound();
     colorButtons.forEach((b) => b.classList.remove('active'));
     btn.classList.add('active');
     selectedColor = btn.dataset.color;
@@ -47,7 +190,22 @@ colorButtons.forEach((btn) => {
 
 // Join Game action
 function performJoin() {
+  initAudio();
+  playClickSound();
+
   const name = nicknameInput.value.trim() || 'Player';
+
+  // Apply remember setting based on checkbox option
+  if (rememberMeCheckbox && rememberMeCheckbox.checked) {
+    localStorage.setItem('blockArena_remember', 'true');
+    localStorage.setItem('blockArena_name', name);
+    localStorage.setItem('blockArena_color', selectedColor);
+  } else {
+    localStorage.setItem('blockArena_remember', 'false');
+    localStorage.removeItem('blockArena_name');
+    localStorage.removeItem('blockArena_color');
+  }
+
   socket.emit('join', {
     name: name,
     color: selectedColor,
@@ -76,9 +234,14 @@ socket.on('gameState', (data) => {
   const count = Object.keys(serverPlayers).length;
   playerCountBadge.textContent = `👤 ${count} Online`;
 
-  // Update own score
+  // Update own score & play gem chime on point increase
   if (myId && serverPlayers[myId]) {
-    myScoreDisplay.textContent = serverPlayers[myId].score;
+    const currentScore = serverPlayers[myId].score;
+    if (currentScore > previousScore) {
+      playGemSound();
+      previousScore = currentScore;
+    }
+    myScoreDisplay.textContent = currentScore;
   }
 
   // Update Leaderboard
@@ -87,6 +250,9 @@ socket.on('gameState', (data) => {
 
 // System Notifications (Join / Leave)
 socket.on('playerNotification', (data) => {
+  if (data && data.type === 'join') {
+    playJoinSound();
+  }
   showNotification(data.text);
 });
 
@@ -100,6 +266,7 @@ function showNotification(text) {
 
 // Chat Messages
 socket.on('chatMessage', (msg) => {
+  playChatSound();
   const item = document.createElement('div');
   item.className = 'chat-msg';
   item.innerHTML = `<span class="sender" style="color: ${msg.color}">${escapeHtml(msg.sender)}:</span><span>${escapeHtml(msg.text)}</span>`;
@@ -120,6 +287,8 @@ chatForm.addEventListener('submit', (e) => {
 // Quick Emotes
 emoteButtons.forEach((btn) => {
   btn.addEventListener('click', () => {
+    initAudio();
+    playClickSound();
     const emoji = btn.dataset.emoji;
     socket.emit('chat', { text: emoji });
   });

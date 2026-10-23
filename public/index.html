@@ -33,6 +33,14 @@
           <button type="button" class="color-btn" data-color="#ec4899" style="--c: #ec4899;"></button>
         </div>
 
+        <div class="remember-option">
+          <label class="remember-checkbox-label">
+            <input type="checkbox" id="rememberMeCheckbox" checked>
+            <span class="custom-check"></span>
+            <span class="label-text">Remember my nickname & color</span>
+          </label>
+        </div>
+
         <button id="joinBtn" class="btn-primary">Enter Game Room 🚀</button>
       </div>
 
@@ -51,6 +59,7 @@
         <span class="badge" id="playerCountBadge">👤 1 Online</span>
       </div>
       <div class="header-right">
+        <button type="button" class="badge sound-btn" id="soundToggleBtn">🔊 Sound ON</button>
         <span class="badge score-badge">Score: <strong id="myScoreDisplay">0</strong></span>
         <span class="badge ping-badge" id="pingDisplay">📶 -- ms</span>
       </div>

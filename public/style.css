@@ -108,8 +108,32 @@ body {
 .color-picker {
   display: flex;
   gap: 12px;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
   justify-content: space-between;
+}
+
+.remember-option {
+  margin-bottom: 24px;
+}
+
+.remember-checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  color: #cbd5e1 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+.remember-checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #38bdf8;
+  cursor: pointer;
 }
 
 .color-btn {
@@ -209,6 +233,26 @@ body {
 
 .ping-badge {
   color: #4ade80;
+}
+
+.sound-btn {
+  cursor: pointer;
+  background: #1e293b;
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.sound-btn:hover {
+  background: rgba(56, 189, 248, 0.15);
+  transform: translateY(-1px);
+}
+
+.sound-btn.muted {
+  color: #94a3b8;
+  border-color: #334155;
+  background: #1e293b;
 }
 
 /* Main Layout Grid */
