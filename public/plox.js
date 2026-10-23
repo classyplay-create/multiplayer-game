@@ -229,6 +229,13 @@
   const lobbyStatusText = document.getElementById('lobbyStatusText');
   const lobbyErrorMsg = document.getElementById('lobbyErrorMsg');
 
+  // Pre-fill pilot handle from URL params or shared portal localStorage
+  const urlParams = new URLSearchParams(window.location.search);
+  const sharedPilot = urlParams.get('name') || localStorage.getItem('arcade_pilot_name') || localStorage.getItem('blockArena_name');
+  if (sharedPilot && playerNameInput) {
+    playerNameInput.value = sharedPilot;
+  }
+
   const btnMusicToggle = document.getElementById('btnMusicToggle');
   const btnSfxToggle = document.getElementById('btnSfxToggle');
 

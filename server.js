@@ -28,7 +28,15 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // Admin secret
 // Serve static frontend files from 'public' directory (with HTML extension support)
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html', 'htm'] }));
 
-// Explicit Plox route handler
+// Explicit route handlers
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/arena', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'arena.html'));
+});
+
 app.get('/plox', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'plox.html'));
 });

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Block Arena - 10-Player Arcade Multiplayer</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Arcade Hub Global Navigation Bar -->
+  <style>
+    .arcade-global-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      background: rgba(11, 15, 30, 0.96);
+      border-bottom: 1px solid #2e3b6e;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      backdrop-filter: blur(8px);
+      box-sizing: border-box;
+    }
+    .arcade-global-brand {
+      color: #f8fafc;
+      font-weight: 900;
+      font-size: 1.05rem;
+      letter-spacing: 1.5px;
+      text-decoration: none;
+    }
+    .arcade-global-brand span {
+      color: #00f2fe;
+      text-shadow: 0 0 10px rgba(0, 242, 254, 0.7);
+    }
+    .arcade-global-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .arcade-global-link {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .arcade-global-link:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .arcade-global-link.active {
+      color: #00f2fe;
+      background: rgba(0, 242, 254, 0.12);
+      border-color: rgba(0, 242, 254, 0.4);
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.2);
+    }
+    .portal-return-pill {
+      background: rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .portal-return-pill:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+  </style>
+
+  <nav class="arcade-global-nav">
+    <a href="/index.html" class="arcade-global-brand">
+      <span>⚡ ARCADE</span> HUB
+    </a>
+    <div class="arcade-global-links">
+      <a href="/arena.html" class="arcade-global-link active">🧱 Block Arena (10P)</a>
+      <a href="/plox.html" class="arcade-global-link">💎 Plox (1v1 Puzzle)</a>
+      <a href="/index.html" class="portal-return-pill">🏠 Hub</a>
+    </div>
+  </nav>
+
+  <!-- Join Overlay Modal (Pre-populated from Portal) -->
+  <div id="joinModal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="logo-badge">🎮 10-PLAYER TEST ARENA</div>
+        <h1>Block Arena</h1>
+        <p>Real-time multiplayer browser game powered by Node.js & Socket.io</p>
+      </div>
+
+      <div class="modal-body">
+        <label for="nicknameInput">Your Nickname</label>
+        <input type="text" id="nicknameInput" placeholder="Enter your name..." maxlength="15" autofocus>
+
+        <label>Choose Your Color</label>
+        <div class="color-picker" id="colorPicker">
+          <button type="button" class="color-btn active" data-color="#38bdf8" style="--c: #38bdf8;"></button>
+          <button type="button" class="color-btn" data-color="#4ade80" style="--c: #4ade80;"></button>
+          <button type="button" class="color-btn" data-color="#a855f7" style="--c: #a855f7;"></button>
+          <button type="button" class="color-btn" data-color="#f43f5e" style="--c: #f43f5e;"></button>
+          <button type="button" class="color-btn" data-color="#f59e0b" style="--c: #f59e0b;"></button>
+          <button type="button" class="color-btn" data-color="#ec4899" style="--c: #ec4899;"></button>
+        </div>
+
+        <div class="remember-option">
+          <label class="remember-checkbox-label">
+            <input type="checkbox" id="rememberMeCheckbox" checked>
+            <span class="custom-check"></span>
+            <span class="label-text">Remember my nickname & color</span>
+          </label>
+        </div>
+
+        <div id="joinErrorBanner" class="join-error-banner hidden"></div>
+
+        <button id="joinBtn" class="btn-primary">Enter Game Room 🚀</button>
+      </div>
+
+      <div class="modal-footer">
+        <span>Controls: <strong>W, A, S, D</strong> or <strong>Arrow Keys</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Game Container -->
+  <div id="gameContainer" class="game-container hidden">
+    <!-- Top HUD Bar -->
+    <header class="game-header">
+      <div class="header-left">
+        <span class="app-logo">🟦 Block Arena</span>
+        <span class="badge" id="playerCountBadge">👤 1 Online</span>
+      </div>
+      <div class="header-right">
+        <button type="button" class="badge sound-btn" id="soundToggleBtn">🔊 Sound ON</button>
+        <span class="badge score-badge">Score: <strong id="myScoreDisplay">0</strong></span>
+        <span class="badge ping-badge" id="pingDisplay">📶 -- ms</span>
+      </div>
+    </header>
+
+    <!-- Play Area & Sidebar -->
+    <main class="game-layout">
+      <!-- Game Canvas Area -->
+      <section class="canvas-wrapper">
+        <canvas id="gameCanvas" width="900" height="600"></canvas>
+
+        <!-- Notification Banner Toast -->
+        <div id="notificationBanner" class="notification-banner"></div>
+
+        <!-- Mobile Touch D-Pad (Visible on touch or small devices) -->
+        <div id="mobileControls" class="mobile-controls">
+          <button class="d-btn up" data-key="up">▲</button>
+          <div class="d-row">
+            <button class="d-btn left" data-key="left">◀</button>
+            <button class="d-btn down" data-key="down">▼</button>
+            <button class="d-btn right" data-key="right">▶</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sidebar: Live Leaderboard & Quick Reactions -->
+      <aside class="game-sidebar">
+        <!-- Live Leaderboard -->
+        <div class="sidebar-box">
+          <div class="box-title">🏆 Live Leaderboard</div>
+          <ul id="leaderboardList" class="leaderboard-list">
+            <li class="loading-item">Waiting for players...</li>
+          </ul>
+        </div>
+
+        <!-- Chat & Reactions Box -->
+        <div class="sidebar-box chat-box">
+          <div class="box-title">💬 Room Chat & Emotes</div>
+          <div id="chatFeed" class="chat-feed"></div>
+
+          <!-- Quick Reaction Buttons -->
+          <div class="quick-emotes">
+            <button class="emote-btn" data-emoji="🔥">🔥</button>
+            <button class="emote-btn" data-emoji="😎">😎</button>
+            <button class="emote-btn" data-emoji="🏆">🏆</button>
+            <button class="emote-btn" data-emoji="🚀">🚀</button>
+            <button class="emote-btn" data-emoji="💥">💥</button>
+            <button class="emote-btn" data-emoji="👏">👏</button>
+          </div>
+
+          <!-- Chat Input -->
+          <form id="chatForm" class="chat-form">
+            <input type="text" id="chatInput" placeholder="Send a message to friends..." maxlength="80">
+            <button type="submit" class="send-btn">Send</button>
+          </form>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Socket.io Client Script -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- Client Game Script -->
+  <script src="game.js"></script>
+
+  <!-- Auto-Sync Pilot Identity from Welcome Portal -->
+  <script>
+    (() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryName = urlParams.get('name');
+      const queryColor = urlParams.get('color');
+      const shouldAuto = urlParams.get('auto') === '1';
+
+      const pilotName = queryName || localStorage.getItem('arcade_pilot_name') || localStorage.getItem('blockArena_name');
+      const pilotColor = queryColor || localStorage.getItem('arcade_pilot_color') || localStorage.getItem('blockArena_color');
+
+      if (pilotName) {
+        const input = document.getElementById('nicknameInput');
+        if (input) input.value = pilotName;
+      }
+
+      if (pilotColor) {
+        const swatches = document.querySelectorAll('.color-btn');
+        swatches.forEach(b => {
+          if (b.dataset.color === pilotColor) {
+            b.click();
+          }
+        });
+      }
+
+      // If user launched directly from Portal with auto flag, auto-enter room smoothly
+      if (shouldAuto) {
+        setTimeout(() => {
+          const joinBtn = document.getElementById('joinBtn');
+          if (joinBtn) joinBtn.click();
+        }, 150);
+      }
+    })();
+  </script>
+</body>
+</html>

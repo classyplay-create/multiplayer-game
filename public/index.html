@@ -2,193 +2,165 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Block Arena - Multiplayer Web Game</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Classy Arcade Hub - Multiplayer Web Games</title>
+  <link rel="stylesheet" href="/portal.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Arcade Hub Global Navigation Bar -->
-  <style>
-    .arcade-global-nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 52px;
-      z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      background: rgba(11, 15, 30, 0.96);
-      border-bottom: 1px solid #2e3b6e;
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      backdrop-filter: blur(8px);
-      box-sizing: border-box;
-    }
-    .arcade-global-brand {
-      color: #f8fafc;
-      font-weight: 900;
-      font-size: 1.05rem;
-      letter-spacing: 1.5px;
-    }
-    .arcade-global-brand span {
-      color: #00f2fe;
-      text-shadow: 0 0 10px rgba(0, 242, 254, 0.7);
-    }
-    .arcade-global-links {
-      display: flex;
-      gap: 10px;
-    }
-    .arcade-global-link {
-      color: #94a3b8;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 700;
-      padding: 6px 14px;
-      border-radius: 8px;
-      border: 1px solid transparent;
-      transition: all 0.2s ease;
-    }
-    .arcade-global-link:hover {
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.06);
-    }
-    .arcade-global-link.active {
-      color: #00f2fe;
-      background: rgba(0, 242, 254, 0.12);
-      border-color: rgba(0, 242, 254, 0.4);
-      box-shadow: 0 0 12px rgba(0, 242, 254, 0.2);
-    }
-  </style>
 
-  <nav class="arcade-global-nav">
-    <div class="arcade-global-brand">
-      <span>⚡ ARCADE</span> HUB
+  <!-- Top Portal Header -->
+  <header class="portal-header">
+    <div class="brand-group">
+      <div class="brand-title"><span>⚡ CLASSY</span> ARCADE</div>
     </div>
-    <div class="arcade-global-links">
-      <a href="/index.html" class="arcade-global-link active">🧱 Block Arena (10P)</a>
-      <a href="/plox.html" class="arcade-global-link">💎 Plox (1v1 Puzzle)</a>
+    <div class="server-status-pill">
+      <span class="status-dot"></span>
+      <span>Live Server • 2 Games Online</span>
     </div>
-  </nav>
-  <!-- Join Overlay Modal (Zero registration, instant enter) -->
-  <div id="joinModal" class="modal-backdrop">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="logo-badge">🎮 10-PLAYER TEST ARENA</div>
-        <h1>Block Arena</h1>
-        <p>Real-time multiplayer browser game powered by Node.js & Socket.io</p>
-      </div>
+  </header>
 
-      <div class="modal-body">
-        <label for="nicknameInput">Your Nickname</label>
-        <input type="text" id="nicknameInput" placeholder="Enter your name..." maxlength="15" autofocus>
+  <!-- Main Hero & Arcade Hub -->
+  <main class="portal-main">
 
-        <label>Choose Your Color</label>
-        <div class="color-picker" id="colorPicker">
-          <button type="button" class="color-btn active" data-color="#38bdf8" style="--c: #38bdf8;"></button>
-          <button type="button" class="color-btn" data-color="#4ade80" style="--c: #4ade80;"></button>
-          <button type="button" class="color-btn" data-color="#a855f7" style="--c: #a855f7;"></button>
-          <button type="button" class="color-btn" data-color="#f43f5e" style="--c: #f43f5e;"></button>
-          <button type="button" class="color-btn" data-color="#f59e0b" style="--c: #f59e0b;"></button>
-          <button type="button" class="color-btn" data-color="#ec4899" style="--c: #ec4899;"></button>
+    <!-- Hero Title -->
+    <section class="hero-section">
+      <div class="hero-badge">🎮 WEB ARCADE PORTAL</div>
+      <h1 class="hero-title">Choose Your Game.<br>Play with Friends.</h1>
+      <p class="hero-subtitle">
+        Free real-time multiplayer browser arcade. Set your pilot handle below and jump into any arena instantly.
+      </p>
+    </section>
+
+    <!-- Pilot Profile / Unified Login Card -->
+    <section class="profile-card-wrapper">
+      <div class="profile-card">
+        <!-- Live Animated Avatar Preview -->
+        <div class="avatar-preview-box">
+          <div class="avatar-cube" id="avatarCube">
+            <div class="avatar-eyes">
+              <div class="avatar-eye"></div>
+              <div class="avatar-eye"></div>
+            </div>
+          </div>
+          <div class="avatar-name-tag" id="avatarNameTag">Pilot_402</div>
+          <span class="avatar-status-text">PILOT READY</span>
         </div>
 
-        <div class="remember-option">
-          <label class="remember-checkbox-label">
-            <input type="checkbox" id="rememberMeCheckbox" checked>
-            <span class="custom-check"></span>
-            <span class="label-text">Remember my nickname & color</span>
+        <!-- Identity Form -->
+        <div class="profile-form">
+          <div class="form-group">
+            <label for="portalNickname">Your Pilot Handle</label>
+            <div class="nickname-input-wrap">
+              <input type="text" id="portalNickname" maxlength="15" placeholder="Enter your name..." autocomplete="off">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Avatar Color</label>
+            <div class="color-palette">
+              <button type="button" class="color-swatch active" data-color="#38bdf8" style="--c: #38bdf8;"></button>
+              <button type="button" class="color-swatch" data-color="#4ade80" style="--c: #4ade80;"></button>
+              <button type="button" class="color-swatch" data-color="#a855f7" style="--c: #a855f7;"></button>
+              <button type="button" class="color-swatch" data-color="#f43f5e" style="--c: #f43f5e;"></button>
+              <button type="button" class="color-swatch" data-color="#f59e0b" style="--c: #f59e0b;"></button>
+              <button type="button" class="color-swatch" data-color="#ec4899" style="--c: #ec4899;"></button>
+            </div>
+          </div>
+
+          <label class="remember-row">
+            <input type="checkbox" id="portalRemember" checked>
+            <span>Remember my profile on this device</span>
           </label>
         </div>
+      </div>
+    </section>
 
-        <div id="joinErrorBanner" class="join-error-banner hidden"></div>
-
-        <button id="joinBtn" class="btn-primary">Enter Game Room 🚀</button>
+    <!-- Game Showcase Catalog -->
+    <section class="catalog-section">
+      <div class="section-header">
+        <h2 class="section-title">🕹️ Arcade Game Catalog</h2>
       </div>
 
-      <div class="modal-footer">
-        <span>Controls: <strong>W, A, S, D</strong> or <strong>Arrow Keys</strong></span>
-      </div>
-    </div>
-  </div>
+      <div class="games-grid">
 
-  <!-- Main Game Container -->
-  <div id="gameContainer" class="game-container hidden">
-    <!-- Top HUD Bar -->
-    <header class="game-header">
-      <div class="header-left">
-        <span class="app-logo">🟦 Block Arena</span>
-        <span class="badge" id="playerCountBadge">👤 1 Online</span>
-      </div>
-      <div class="header-right">
-        <button type="button" class="badge sound-btn" id="soundToggleBtn">🔊 Sound ON</button>
-        <span class="badge score-badge">Score: <strong id="myScoreDisplay">0</strong></span>
-        <span class="badge ping-badge" id="pingDisplay">📶 -- ms</span>
-      </div>
-    </header>
-
-    <!-- Play Area & Sidebar -->
-    <main class="game-layout">
-      <!-- Game Canvas Area -->
-      <section class="canvas-wrapper">
-        <canvas id="gameCanvas" width="900" height="600"></canvas>
-
-        <!-- Notification Banner Toast -->
-        <div id="notificationBanner" class="notification-banner"></div>
-
-        <!-- Mobile Touch D-Pad (Visible on touch or small devices) -->
-        <div id="mobileControls" class="mobile-controls">
-          <button class="d-btn up" data-key="up">▲</button>
-          <div class="d-row">
-            <button class="d-btn left" data-key="left">◀</button>
-            <button class="d-btn down" data-key="down">▼</button>
-            <button class="d-btn right" data-key="right">▶</button>
+        <!-- Game 1: Block Arena -->
+        <div class="game-card featured-arena">
+          <div class="card-top">
+            <div class="card-badges">
+              <span class="badge-tag badge-live">🟢 LIVE</span>
+              <span class="badge-tag badge-mode">10 PLAYERS</span>
+            </div>
+            <h3 class="card-title">🟦 Block Arena</h3>
+            <p class="card-desc">
+              Fast-paced survival arena. Steer your block, gather glowing food gems, climb the live leaderboard, and chat with friends in real-time.
+            </p>
+            <div class="card-features">
+              <div class="feature-item">⚡ 30-tick smooth WebSocket sync</div>
+              <div class="feature-item">🏆 Live real-time leaderboard</div>
+              <div class="feature-item">💬 Room chat & quick emoji reactions</div>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <!-- Sidebar: Live Leaderboard & Quick Reactions -->
-      <aside class="game-sidebar">
-        <!-- Live Leaderboard -->
-        <div class="sidebar-box">
-          <div class="box-title">🏆 Live Leaderboard</div>
-          <ul id="leaderboardList" class="leaderboard-list">
-            <li class="loading-item">Waiting for players...</li>
-          </ul>
+          <a href="/arena.html" id="btnLaunchArena" class="launch-btn btn-arena">
+            Launch Block Arena 🚀
+          </a>
         </div>
 
-        <!-- Chat & Reactions Box -->
-        <div class="sidebar-box chat-box">
-          <div class="box-title">💬 Room Chat & Emotes</div>
-          <div id="chatFeed" class="chat-feed"></div>
-
-          <!-- Quick Reaction Buttons -->
-          <div class="quick-emotes">
-            <button class="emote-btn" data-emoji="🔥">🔥</button>
-            <button class="emote-btn" data-emoji="😎">😎</button>
-            <button class="emote-btn" data-emoji="🏆">🏆</button>
-            <button class="emote-btn" data-emoji="🚀">🚀</button>
-            <button class="emote-btn" data-emoji="💥">💥</button>
-            <button class="emote-btn" data-emoji="👏">👏</button>
+        <!-- Game 2: Plox -->
+        <div class="game-card featured-plox">
+          <div class="card-top">
+            <div class="card-badges">
+              <span class="badge-tag badge-live">🟢 LIVE</span>
+              <span class="badge-tag badge-duel">1v1 DUEL</span>
+            </div>
+            <h3 class="card-title">💎 Plox 1v1 Battle</h3>
+            <p class="card-desc">
+              Competitive falling-gem puzzle. Cycle 3-block triplets, match 3 across rows and diagonals, trigger cascading combos, and bury opponents in junk attacks.
+            </p>
+            <div class="card-features">
+              <div class="feature-item">⚔️ Quick Match & Private Room Codes</div>
+              <div class="feature-item">💥 Avalanche junk block attacks</div>
+              <div class="feature-item">🎵 Dynamic 8-bit chiptune background music</div>
+            </div>
           </div>
-
-          <!-- Chat Input -->
-          <form id="chatForm" class="chat-form">
-            <input type="text" id="chatInput" placeholder="Send a message to friends..." maxlength="80">
-            <button type="submit" class="send-btn">Send</button>
-          </form>
+          <a href="/plox.html" id="btnLaunchPlox" class="launch-btn btn-plox">
+            Launch Plox ⚔️
+          </a>
         </div>
-      </aside>
-    </main>
-  </div>
 
-  <!-- Socket.io Client Script (provided automatically by Socket.io server) -->
-  <script src="/socket.io/socket.io.js"></script>
-  <!-- Client Game Script -->
-  <script src="game.js"></script>
+        <!-- Game 3: Coming Soon Teaser -->
+        <div class="game-card teaser-card">
+          <div class="card-top">
+            <div class="card-badges">
+              <span class="badge-tag badge-dev">⏳ IN LAB</span>
+            </div>
+            <h3 class="card-title" style="color: #94a3b8;">🕹️ Classic Arcade 3</h3>
+            <p class="card-desc">
+              A classic retro multiplayer remake is currently in development. Will feature instant room matching and mobile touch support.
+            </p>
+            <div class="card-features">
+              <div class="feature-item" style="color: #64748b;">🔒 Secret title reveal soon</div>
+              <div class="feature-item" style="color: #64748b;">🏆 Global high scores</div>
+            </div>
+          </div>
+          <button class="launch-btn btn-disabled" disabled>
+            In Development 🛠️
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="portal-footer">
+    <div>⚡ CLASSY PLAY ARCADE &bull; Powered by Node.js & Socket.io</div>
+    <div>Zero registration &bull; Instant guest join &bull; Works on mobile & desktop</div>
+  </footer>
+
+  <script src="/portal.js"></script>
 </body>
 </html>
